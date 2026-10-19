@@ -93,7 +93,7 @@ const faq = [
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -108,14 +108,13 @@ const faq = [
 		<link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
 		<script is:inline>
-			// Same storage key as the docs, so the theme carries over between the two.
+			// Light unless the visitor chose dark. Same storage key as the docs, so the choice carries over.
 			(() => {
 				let stored = '';
 				try {
 					stored = localStorage.getItem('starlight-theme') || '';
 				} catch {}
-				const theme = stored === 'light' || stored === 'dark' ? stored : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-				document.documentElement.dataset.theme = theme;
+				document.documentElement.dataset.theme = stored === 'dark' ? 'dark' : 'light';
 			})();
 		</script>
 	</head>

@@ -35,3 +35,40 @@ pre.mermaid,
 	outline: 2px solid var(--sl-color-accent-high);
 	outline-offset: 2px;
 }
+
+/* A slim "On this page" column, about as wide as its heading, so the page itself gets the room. */
+@media (min-width: 72rem) {
+	:root {
+		--toc-width: 10rem;
+		--toc-pad: 0.9rem;
+		--sl-content-width: 60rem;
+	}
+	.right-sidebar-container {
+		flex: none;
+		width: var(--toc-width);
+	}
+	[data-has-sidebar][data-has-toc] .main-pane {
+		--sl-content-margin-inline: auto;
+		width: calc(100% - var(--toc-width));
+	}
+	.right-sidebar-panel {
+		padding-inline: var(--toc-pad);
+	}
+	/* The column is position: fixed, so its own width is the window's; this keeps the list inside it. */
+	.right-sidebar-panel .sl-container {
+		width: calc(var(--toc-width) - 2 * var(--toc-pad));
+		max-width: none;
+	}
+}
+
+.right-sidebar-panel h2 {
+	font-size: 1.05rem;
+	white-space: nowrap;
+}
+.right-sidebar-panel nav a {
+	padding-inline: calc(0.6rem * var(--depth) + 0.3rem) 0.3rem;
+	font-size: 0.95rem;
+	line-height: 1.35;
+	overflow-wrap: normal;
+	hyphens: auto;
+}

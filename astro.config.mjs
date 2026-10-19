@@ -21,6 +21,10 @@ export default defineConfig({
 			],
 			social: [{ icon: 'github', label: 'GitHub', href: repo }],
 			editLink: { baseUrl: 'https://github.com/Ludexis/ludexis-website/edit/main/' },
+			components: {
+				ThemeProvider: './src/components/ThemeProvider.astro',
+				ThemeSelect: './src/components/ThemeToggle.astro',
+			},
 			customCss: [
 				'@fontsource/cinzel/600.css',
 				'@fontsource/cinzel/700.css',

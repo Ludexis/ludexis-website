@@ -1,0 +1,10 @@
+{/* Light unless the visitor chose dark; inlined so the page never flashes the other theme. Same key as the homepage. */}
+<script is:inline>
+	(() => {
+		let stored = '';
+		try {
+			stored = localStorage.getItem('starlight-theme') || '';
+		} catch {}
+		document.documentElement.dataset.theme = stored === 'dark' ? 'dark' : 'light';
+	})();
+</script>
