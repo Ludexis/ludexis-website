@@ -1,0 +1,68 @@
+/*
+ * The Ludexis palette, shared by the homepage and the docs.
+ * Dark is the app's own palette; light is a cool lavender vellum instead of white, easier on the eyes.
+ * Starlight's scale runs from --sl-color-black (page) to --sl-color-white (strongest text) in both themes.
+ */
+:root {
+	--night: #09080d;
+	--vault: #121019;
+	--stone: #1b1825;
+	--seam: #2b2738;
+	--text: #ece5d6;
+	--text-strong: #f6f1e7;
+	--muted: #a39db3;
+	--violet: #5b35a3;
+	--violet-lit: #a284f2;
+	--spark: #e3a83b;
+	--on-violet: #f6f1e7;
+	--shadow: rgb(0 0 0 / 0.45);
+
+	--font-display: 'Cinzel', ui-serif, Georgia, serif;
+	--font-body: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+	--font-code: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+
+	--sl-font: var(--font-body);
+	--sl-font-mono: var(--font-code);
+
+	--sl-color-white: var(--text-strong);
+	--sl-color-gray-1: var(--text);
+	--sl-color-gray-2: #cdc6d8;
+	--sl-color-gray-3: var(--muted);
+	--sl-color-gray-4: #67607a;
+	--sl-color-gray-5: var(--seam);
+	--sl-color-gray-6: var(--stone);
+	--sl-color-gray-7: var(--vault);
+	--sl-color-black: var(--night);
+
+	--sl-color-accent-low: #2a1d4a;
+	--sl-color-accent: #6c46c8;
+	--sl-color-accent-high: #c3b0fa;
+}
+
+:root[data-theme='light'] {
+	--night: #eeecf3;
+	--vault: #f7f6fa;
+	--stone: #e6e3ee;
+	--seam: #d6d1e2;
+	--text: #2a2634;
+	--text-strong: #16131d;
+	--muted: #5d576c;
+	--violet: #5b35a3;
+	--violet-lit: #5b35a3;
+	--spark: #b97a12;
+	--shadow: rgb(45 30 90 / 0.14);
+
+	--sl-color-white: var(--text-strong);
+	--sl-color-gray-1: var(--text);
+	--sl-color-gray-2: #423d4f;
+	--sl-color-gray-3: var(--muted);
+	--sl-color-gray-4: #8a849a;
+	--sl-color-gray-5: #c9c3d8;
+	--sl-color-gray-6: var(--seam);
+	--sl-color-gray-7: var(--stone);
+	--sl-color-black: var(--night);
+
+	--sl-color-accent-low: #ddd2f7;
+	--sl-color-accent: #5b35a3;
+	--sl-color-accent-high: #3f2178;
+}

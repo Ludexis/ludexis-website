@@ -1,0 +1,37 @@
+/* Docs only: the brand's display face for titles, everything else stays plain and readable. */
+.site-title {
+	font-family: var(--font-display);
+	font-weight: 700;
+	letter-spacing: 0.04em;
+}
+
+.sl-markdown-content h1,
+h1#_top {
+	font-family: var(--font-display);
+	font-weight: 600;
+	letter-spacing: 0.01em;
+}
+
+.sl-markdown-content :is(h2, h3, h4) {
+	font-weight: 600;
+}
+
+.sl-markdown-content {
+	line-height: 1.7;
+}
+
+/* Diagrams sit on the page's raised surface and scroll sideways on small screens. */
+pre.mermaid,
+.mermaid {
+	background: var(--sl-color-gray-7);
+	border: 1px solid var(--sl-color-gray-6);
+	border-radius: 0.5rem;
+	padding: 1rem;
+	overflow-x: auto;
+	text-align: center;
+}
+
+:focus-visible {
+	outline: 2px solid var(--sl-color-accent-high);
+	outline-offset: 2px;
+}
