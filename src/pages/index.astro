@@ -1,0 +1,355 @@
+---
+import '@fontsource/cinzel/600.css';
+import '@fontsource/cinzel/700.css';
+import '@fontsource/hanken-grotesk/400.css';
+import '@fontsource/hanken-grotesk/500.css';
+import '@fontsource/hanken-grotesk/600.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '../styles/tokens.css';
+import '../styles/home.css';
+import { Image } from 'astro:assets';
+import Sigil from '../components/Sigil.astro';
+import home from '../assets/screenshots/home.webp';
+import library from '../assets/screenshots/library.webp';
+import gamePage from '../assets/screenshots/game_page.webp';
+import franchise from '../assets/screenshots/franchise.webp';
+
+const org = 'https://github.com/Ludexis';
+const repo = `${org}/Ludexis`;
+const description = 'A self-hosted catalogue for your game archives. Point it at your drives and get a searchable library with details, artwork and versions.';
+
+const screens = [
+	{ id: 'home', label: 'Home', path: '/', image: home, caption: 'Featured games, recently added, and games to rediscover.' },
+	{ id: 'library', label: 'Library', path: '/library', image: library, caption: 'Every game in your archive, with filters, sorting and versions grouped into one card.' },
+	{ id: 'game', label: 'Game page', path: '/archive/…', image: gamePage, caption: 'Details, screenshots, versions, the files on disk, and their history.' },
+	{ id: 'franchise', label: 'Franchises', path: '/franchises', image: franchise, caption: 'Series and franchises, gathered from every metadata source.' },
+];
+
+const steps = [
+	{ title: 'Scan', text: 'Add the folders that hold your games, on the server or on another computer. Ludexis reads archives, installers, disc images and game folders without unpacking anything.' },
+	{ title: 'Match', text: 'Each game is matched against VNDB, IGDB and Steam. Gaps in one source are filled from the others, and covers, banners and screenshots are saved on your server.' },
+	{ title: 'Browse', text: 'You and the people you share with open the library in a browser, with versions grouped, favourites, collections and a completed mark for everyone.' },
+];
+
+const comparison = [
+	['What it catalogues', 'Installed games, or games added one by one', 'The files themselves: .zip, .rar, .7z, .iso, .exe and game folders'],
+	['What each device needs', 'A launcher or client app', 'A web browser'],
+	['Visual novels and Ren’Py games', 'Matched against general game databases', 'Matched through VNDB, alongside IGDB and Steam'],
+	['An unplugged drive', 'Games are tracked while installed and reachable', 'Its games stay in the library, marked offline, until it is back'],
+	['Drives on another computer', 'Games must be on the machine running it', 'An edge device scans them where they are'],
+	['Several versions of one game', 'Usually separate entries', 'One card with a Versions tab, episodes in order'],
+];
+
+const extras = [
+	['Identify by hand', 'When a match is wrong, search every source at once and pick the right game.'],
+	['Duplicates by content', 'Archives are hashed, so copies under other names or on other drives are found.'],
+	['Quick rescans', 'Scheduled scans compare sizes and hash nothing; new files wait for you to check them.'],
+	['Accounts and roles', 'Decide who manages libraries and settings, and what each account can see.'],
+	['Extra sources', 'Load more metadata providers from a plugin folder without changing Ludexis.'],
+	['Runs anywhere', 'One Docker Compose file, with images for amd64 and arm64.'],
+];
+
+const faq = [
+	['Does Ludexis install or run games?', 'No. It catalogues the files where they are and never extracts, installs or launches anything. It is a library to browse, not a launcher.'],
+	['Which files does it recognise?', 'Archives and installers ending in .zip, .rar, .7z, .iso and .exe, plus unpacked game folders. Each one becomes an entry, and files of the same game are grouped into one card.'],
+	['Do I need API keys?', 'VNDB and Steam work without one. IGDB needs a free Twitch client ID and secret, which you can enter during setup. A SteamGridDB key is optional and adds more artwork.'],
+	['What happens when a drive is unplugged?', 'Its games stay in the library and are marked offline. When the drive comes back, a quick scan finds them again without reading every file.'],
+	['My games are on a laptop, not the server. Does that work?', 'Yes. Install an edge device on the laptop. It scans the drives attached to it and sends the results to your server, which stays the only database.'],
+	['Can it run on a Raspberry Pi?', 'Yes. Images are published for amd64 and arm64. Plan for 2 GB of memory, or 4 GB for large libraries.'],
+	['Can people download games from it?', 'No. Ludexis shows what you have and where it is stored; the files stay on your drives.'],
+	['Is it free?', 'Yes. Ludexis is open source under the MIT licence.'],
+];
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Ludexis: a self-hosted catalogue for your game archives</title>
+		<meta name="description" content={description} />
+		<meta property="og:title" content="Ludexis" />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content="https://ludexis.rupa.dev/brand/og.png" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<link rel="icon" href="/icon.png" />
+		<link rel="apple-touch-icon" href="/apple-icon.png" />
+		<script is:inline>
+			// Same storage key as the docs, so the theme carries over between the two.
+			(() => {
+				let stored = '';
+				try {
+					stored = localStorage.getItem('starlight-theme') || '';
+				} catch {}
+				const theme = stored === 'light' || stored === 'dark' ? stored : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+				document.documentElement.dataset.theme = theme;
+			})();
+		</script>
+	</head>
+	<body>
+		<a class="skip" href="#main">Skip to content</a>
+
+		<header class="bar">
+			<a class="brand" href="/" aria-label="Ludexis home">
+				<img src="/brand/shield.png" alt="" width="32" height="32" />
+				<span>Ludexis</span>
+			</a>
+			<nav aria-label="Main">
+				<a href="/docs/introduction/">Docs</a>
+				<button class="icon-button" type="button" data-theme-toggle aria-label="Switch to light theme">
+					<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" /><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1" /></svg>
+					<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z" /></svg>
+				</button>
+				<a class="icon-button" href={repo} aria-label="Ludexis on GitHub">
+					<svg viewBox="0 0 24 24" aria-hidden="true" class="filled"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z" /></svg>
+				</a>
+			</nav>
+		</header>
+
+		<main id="main">
+			<section class="hero">
+				<div class="hero-text">
+					<h1>Your game archive, catalogued.</h1>
+					<p class="lede">
+						Point Ludexis at the drives where your installers, archives and visual novels live. It recognises each game, fetches its details and artwork, groups its versions, and serves it all as a library you browse from any device.
+					</p>
+					<div class="actions">
+						<a class="button primary" href="/docs/start/quick-start/">Set it up</a>
+						<a class="button" href={repo}>View on GitHub</a>
+					</div>
+					<div class="command">
+						<code><span aria-hidden="true">$ </span>docker compose up -d</code>
+						<button type="button" class="copy" data-copy="docker compose up -d" aria-label="Copy command">Copy</button>
+					</div>
+				</div>
+				<div class="hero-art">
+					<Sigil />
+				</div>
+			</section>
+
+			<section class="screens" aria-labelledby="screens-title">
+				<h2 id="screens-title">What it looks like</h2>
+				<div class="tabs" role="tablist" aria-label="Screens">
+					{screens.map((screen, index) => (
+						<button
+							type="button"
+							role="tab"
+							id={`tab-${screen.id}`}
+							aria-controls={`panel-${screen.id}`}
+							aria-selected={index === 0 ? 'true' : 'false'}
+							tabindex={index === 0 ? 0 : -1}
+						>
+							{screen.label}
+						</button>
+					))}
+				</div>
+				<div class="frame">
+					{screens.map((screen, index) => (
+						<figure role="tabpanel" id={`panel-${screen.id}`} aria-labelledby={`tab-${screen.id}`} hidden={index !== 0}>
+							<div class="address" aria-hidden="true">ludexis.example.com{screen.path}</div>
+							<Image
+								src={screen.image}
+								alt={`Ludexis ${screen.label.toLowerCase()} screen`}
+								widths={[800, 1280, 1920, 2560]}
+								sizes="(min-width: 76rem) 72rem, 94vw"
+								loading={index === 0 ? 'eager' : 'lazy'}
+							/>
+							<figcaption>{screen.caption}</figcaption>
+						</figure>
+					))}
+				</div>
+			</section>
+
+			<section class="steps" aria-labelledby="steps-title">
+				<h2 id="steps-title">How it works</h2>
+				<ol>
+					{steps.map((step) => (
+						<li>
+							<h3>{step.title}</h3>
+							<p>{step.text}</p>
+						</li>
+					))}
+				</ol>
+			</section>
+
+			<section class="why" aria-labelledby="why-title">
+				<div class="why-intro">
+					<h2 id="why-title">Built for archives, not installs</h2>
+					<p>
+						Most game software assumes a game is something you install and launch. A shelf of archives spread over several drives fits neither a launcher nor a game server, and that is what Ludexis is for.
+					</p>
+				</div>
+				<div class="table-wrap">
+					<table>
+						<thead>
+							<tr>
+								<th scope="col"><span class="visually-hidden">Topic</span></th>
+								<th scope="col">Typical launcher or game server</th>
+								<th scope="col">Ludexis</th>
+							</tr>
+						</thead>
+						<tbody>
+							{comparison.map(([topic, typical, ours]) => (
+								<tr>
+									<th scope="row">{topic}</th>
+									<td>{typical}</td>
+									<td class="ours">{ours}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+				<dl class="extras">
+					{extras.map(([term, text]) => (
+						<div>
+							<dt>{term}</dt>
+							<dd>{text}</dd>
+						</div>
+					))}
+				</dl>
+			</section>
+
+			<section class="edge" aria-labelledby="edge-title">
+				<div class="edge-text">
+					<h2 id="edge-title">Drives on other computers stay where they are</h2>
+					<p>
+						Add a laptop or another PC as an edge device under Admin, run its install files, and choose it as a library's location. It scans the drives attached to it and sends the results to your server, which stays the only database.
+					</p>
+					<p>On Linux, plugging in a known drive mounts it read-only and starts a scan. On Windows, one command checks that every drive is mapped.</p>
+					<a class="text-link" href="/docs/edge/overview/">Read about edge devices</a>
+				</div>
+				<svg class="edge-diagram" viewBox="0 0 420 220" role="img" aria-label="On a laptop, the edge device scans the attached drives and sends the results over HTTPS to your Ludexis server.">
+					<g class="node">
+						<rect x="6" y="30" width="236" height="160" rx="14" />
+						<text x="124" y="60">Laptop or PC</text>
+						<text class="small" x="62" y="92">drives</text>
+						<rect class="disk" x="26" y="104" width="72" height="20" rx="4" />
+						<rect class="disk" x="26" y="132" width="72" height="20" rx="4" />
+						<rect class="disk" x="26" y="160" width="72" height="20" rx="4" />
+						<path class="link" d="M100 142h34" />
+					</g>
+					<g class="node accent">
+						<rect x="134" y="110" width="92" height="64" rx="12" />
+						<text x="180" y="138">Edge</text>
+						<text class="small" x="180" y="158">scans here</text>
+					</g>
+					<path class="link" d="M226 142h84" />
+					<text class="small" x="268" y="132">HTTPS</text>
+					<g class="node">
+						<rect x="310" y="30" width="104" height="160" rx="14" />
+						<text x="362" y="60">Server</text>
+						<text class="small" x="362" y="104">database</text>
+						<text class="small" x="362" y="126">artwork</text>
+						<text class="small" x="362" y="148">web app</text>
+					</g>
+				</svg>
+			</section>
+
+			<section class="install" aria-labelledby="install-title">
+				<div class="install-text">
+					<h2 id="install-title">Up and running in a few minutes</h2>
+					<p>
+						Ludexis runs as one Docker Compose stack: the web app, API, workers, PostgreSQL, Redis and a small proxy that serves it all on one port. You need Docker with Compose, 2 GB of memory and a folder of games.
+					</p>
+					<a class="text-link" href="/docs/start/quick-start/">Full quick start</a>
+				</div>
+				<div class="terminal">
+					<button type="button" class="copy" data-copy-from="install-commands" aria-label="Copy commands">Copy</button>
+					<pre id="install-commands"><code><span class="comment"># Download the compose file, settings and proxy config</span>
+base=https://raw.githubusercontent.com/Ludexis/Ludexis/main
+curl -O $base/docker-compose.yml
+curl -O $base/.env.example
+mkdir deploy && curl -o deploy/Caddyfile $base/deploy/Caddyfile
+cp .env.example .env
+
+<span class="comment"># Set GAMES_PATH, TZ and POSTGRES_PASSWORD in .env, then</span>
+docker compose up -d
+
+<span class="comment"># Open http://&lt;host&gt;:8420 and sign in as admin / admin</span></code></pre>
+				</div>
+			</section>
+
+			<section class="faq" aria-labelledby="faq-title">
+				<h2 id="faq-title">Questions</h2>
+				<div class="faq-list">
+					{faq.map(([question, answer]) => (
+						<details>
+							<summary>{question}</summary>
+							<p>{answer}</p>
+						</details>
+					))}
+				</div>
+			</section>
+		</main>
+
+		<footer class="foot">
+			<div class="foot-brand">
+				<img src="/brand/shield.png" alt="" width="40" height="40" />
+				<p>Ludexis is open source under the MIT licence.</p>
+			</div>
+			<nav aria-label="Documentation">
+				<h2>Documentation</h2>
+				<a href="/docs/start/quick-start/">Quick start</a>
+				<a href="/docs/edge/overview/">Edge devices</a>
+				<a href="/docs/architecture/overview/">Architecture</a>
+				<a href="/docs/contributing/setup/">Contributing</a>
+			</nav>
+			<nav aria-label="Repositories">
+				<h2>Repositories</h2>
+				<a href={repo}>Ludexis</a>
+				<a href={`${org}/ludexis-backend`}>Backend</a>
+				<a href={`${org}/ludexis-frontend`}>Frontend</a>
+				<a href={`${org}/ludexis-website`}>This website</a>
+			</nav>
+		</footer>
+
+		<script>
+			const root = document.documentElement;
+			const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+			const label = () => toggle?.setAttribute('aria-label', `Switch to ${root.dataset.theme === 'light' ? 'dark' : 'light'} theme`);
+			label();
+			toggle?.addEventListener('click', () => {
+				root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
+				try {
+					localStorage.setItem('starlight-theme', root.dataset.theme);
+				} catch {}
+				label();
+			});
+
+			// Screens: tabs with arrow-key movement, as the ARIA tabs pattern describes.
+			const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+			const select = (tab: HTMLButtonElement) => {
+				for (const other of tabs) {
+					const selected = other === tab;
+					other.setAttribute('aria-selected', String(selected));
+					other.tabIndex = selected ? 0 : -1;
+					document.getElementById(other.getAttribute('aria-controls')!)!.hidden = !selected;
+				}
+			};
+			tabs.forEach((tab, index) => {
+				tab.addEventListener('click', () => select(tab));
+				tab.addEventListener('keydown', (event) => {
+					const move = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+					if (!move) return;
+					const next = tabs[(index + move + tabs.length) % tabs.length];
+					select(next);
+					next.focus();
+				});
+			});
+
+			for (const button of document.querySelectorAll<HTMLButtonElement>('.copy')) {
+				button.addEventListener('click', async () => {
+					const source = button.dataset.copyFrom ? document.getElementById(button.dataset.copyFrom)?.innerText : button.dataset.copy;
+					if (!source) return;
+					try {
+						await navigator.clipboard.writeText(source.trim());
+						button.textContent = 'Copied';
+					} catch {
+						button.textContent = 'Copy failed';
+					}
+					setTimeout(() => (button.textContent = 'Copy'), 1600);
+				});
+			}
+		</script>
+	</body>
+</html>

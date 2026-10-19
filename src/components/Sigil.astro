@@ -1,0 +1,239 @@
+---
+// The knight emblem as a 3D token: the emblem in front, the shield on the back, and a rim built from
+// stacked silhouettes of the emblem so the edge follows its exact outline. Drag or use the arrow keys to turn it.
+const LAYERS = 22;
+---
+
+<div class="sigil-stage">
+	<div
+		class="sigil"
+		tabindex="0"
+		role="img"
+		aria-label="The Ludexis knight, turning slowly. Drag it or use the arrow keys to spin it."
+		data-sigil
+	>
+		<img class="face front" src="/brand/knight.webp" alt="" width="579" height="565" draggable="false" />
+		{Array.from({ length: LAYERS }, (_, i) => (
+			<span class="rim" style={`--i:${i + 1};--t:${(i + 1) / LAYERS}`} />
+		))}
+		<span class="back-plate" style={`--i:${LAYERS + 1}`}></span>
+		<img class="face back" src="/brand/shield.png" alt="" width="256" height="256" draggable="false" style={`--i:${LAYERS + 1}`} />
+		<svg class="spark s1" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.8 6.4 4.6 10.6 12 12-7.4 1.4-11.2 5.6-12 12-.8-6.4-4.6-10.6-12-12C7.4 10.6 11.2 6.4 12 0Z" /></svg>
+		<svg class="spark s2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.8 6.4 4.6 10.6 12 12-7.4 1.4-11.2 5.6-12 12-.8-6.4-4.6-10.6-12-12C7.4 10.6 11.2 6.4 12 0Z" /></svg>
+		<svg class="spark s3" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.8 6.4 4.6 10.6 12 12-7.4 1.4-11.2 5.6-12 12-.8-6.4-4.6-10.6-12-12C7.4 10.6 11.2 6.4 12 0Z" /></svg>
+	</div>
+	<div class="sigil-shadow" aria-hidden="true"></div>
+</div>
+
+<style>
+	.sigil-stage {
+		--size: min(26rem, 78vw);
+		--gap: 0.85px;
+		position: relative;
+		width: var(--size);
+		aspect-ratio: 579 / 565;
+		perspective: 1400px;
+		margin-inline: auto;
+	}
+
+	.sigil {
+		position: absolute;
+		inset: 0;
+		transform-style: preserve-3d;
+		transform: rotateX(var(--tilt, 0deg)) rotateY(var(--turn, -18deg));
+		cursor: grab;
+		touch-action: pan-y;
+		border-radius: 1rem;
+		animation: bob 6s ease-in-out infinite;
+	}
+	.sigil:active {
+		cursor: grabbing;
+	}
+	.sigil:focus-visible {
+		outline: 2px dashed var(--violet-lit);
+		outline-offset: 1.5rem;
+	}
+
+	.face,
+	.rim,
+	.back-plate {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		user-select: none;
+	}
+
+	.front {
+		transform: translateZ(0);
+		backface-visibility: hidden;
+		filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.4));
+	}
+
+	/* Each rim layer is the emblem's silhouette in a colour that runs from lit violet to deep violet-steel. */
+	.rim {
+		transform: translateZ(calc(var(--i) * var(--gap) * -1));
+		background: color-mix(in oklab, #b9a2f5 calc((1 - var(--t)) * 100%), #241640);
+		mask: url('/brand/knight.webp') center / contain no-repeat;
+		-webkit-mask: url('/brand/knight.webp') center / contain no-repeat;
+	}
+
+	.back-plate {
+		transform: translateZ(calc(var(--i) * var(--gap) * -1)) rotateY(180deg);
+		background: #1a1030;
+		mask: url('/brand/knight.webp') center / contain no-repeat;
+		-webkit-mask: url('/brand/knight.webp') center / contain no-repeat;
+	}
+
+	.back {
+		inset: 24% 26%;
+		width: 48%;
+		height: auto;
+		transform: translateZ(calc(var(--i) * var(--gap) * -1 - 1px)) rotateY(180deg);
+		backface-visibility: hidden;
+		filter: drop-shadow(0 0 18px rgb(162 132 242 / 0.55));
+	}
+
+	/* Sparkles float in front of the token at different depths, so they drift against it as it turns. */
+	.spark {
+		position: absolute;
+		fill: var(--spark);
+		filter: drop-shadow(0 0 6px color-mix(in oklab, var(--spark) 70%, transparent));
+		animation: twinkle 3.6s ease-in-out infinite;
+	}
+	.s1 {
+		width: 7%;
+		left: 4%;
+		top: 18%;
+		transform: translateZ(70px);
+	}
+	.s2 {
+		width: 5%;
+		right: 2%;
+		top: 30%;
+		transform: translateZ(110px);
+		animation-delay: -1.2s;
+	}
+	.s3 {
+		width: 4%;
+		right: 16%;
+		bottom: 8%;
+		transform: translateZ(40px);
+		animation-delay: -2.4s;
+	}
+
+	.sigil-shadow {
+		position: absolute;
+		left: 18%;
+		right: 18%;
+		bottom: -9%;
+		height: 8%;
+		border-radius: 50%;
+		background: radial-gradient(closest-side, color-mix(in oklab, var(--violet) 55%, transparent), transparent);
+		animation: shadow 6s ease-in-out infinite;
+	}
+
+	@keyframes bob {
+		50% {
+			translate: 0 -10px;
+		}
+	}
+	@keyframes shadow {
+		50% {
+			scale: 0.86;
+			opacity: 0.7;
+		}
+	}
+	@keyframes twinkle {
+		0%,
+		100% {
+			opacity: 0.35;
+			scale: 0.7;
+		}
+		50% {
+			opacity: 1;
+			scale: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.sigil,
+		.sigil-shadow,
+		.spark {
+			animation: none;
+		}
+	}
+</style>
+
+<script>
+	const sigil = document.querySelector<HTMLElement>('[data-sigil]');
+	const still = matchMedia('(prefers-reduced-motion: reduce)');
+
+	if (sigil) {
+		const IDLE = 9; // degrees per second when nobody is touching it
+		let turn = -18;
+		let speed = IDLE;
+		let tilt = 0;
+		let targetTilt = 0;
+		let dragX: number | null = null;
+		let last = performance.now();
+
+		const render = () => {
+			sigil.style.setProperty('--turn', `${turn.toFixed(2)}deg`);
+			sigil.style.setProperty('--tilt', `${tilt.toFixed(2)}deg`);
+		};
+
+		const frame = (now: number) => {
+			const dt = Math.min((now - last) / 1000, 0.05);
+			last = now;
+			if (dragX === null) {
+				// A flick keeps spinning and settles back to the idle turn.
+				speed += (IDLE - speed) * Math.min(dt * 1.6, 1);
+				turn += speed * dt;
+			}
+			tilt += (targetTilt - tilt) * Math.min(dt * 4, 1);
+			render();
+			requestAnimationFrame(frame);
+		};
+
+		sigil.addEventListener('pointerdown', (event) => {
+			dragX = event.clientX;
+			speed = 0;
+			sigil.setPointerCapture(event.pointerId);
+		});
+		sigil.addEventListener('pointermove', (event) => {
+			if (dragX === null) return;
+			const dx = event.clientX - dragX;
+			dragX = event.clientX;
+			turn += dx * 0.5;
+			speed = dx * 30;
+			if (still.matches) render();
+		});
+		const release = () => {
+			dragX = null;
+		};
+		sigil.addEventListener('pointerup', release);
+		sigil.addEventListener('pointercancel', release);
+
+		sigil.addEventListener('keydown', (event) => {
+			const step = event.key === 'ArrowLeft' ? -30 : event.key === 'ArrowRight' ? 30 : 0;
+			if (!step) return;
+			event.preventDefault();
+			turn += step;
+			if (still.matches) render();
+		});
+
+		// It leans a little toward the pointer anywhere in the hero.
+		sigil.closest('section')?.addEventListener('pointermove', (event) => {
+			const box = sigil.getBoundingClientRect();
+			targetTilt = Math.max(-10, Math.min(10, ((box.top + box.height / 2 - event.clientY) / box.height) * 12));
+		});
+
+		if (still.matches) {
+			turn = 0;
+			render();
+		} else {
+			requestAnimationFrame(frame);
+		}
+	}
+</script>
