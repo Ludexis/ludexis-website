@@ -9,21 +9,52 @@ import '../styles/tokens.css';
 import '../styles/home.css';
 import { Image } from 'astro:assets';
 import Sigil from '../components/Sigil.astro';
+import shield from '../assets/shield.png';
+import displayFont from '@fontsource/cinzel/files/cinzel-latin-700-normal.woff2?url';
+import bodyFont from '@fontsource/hanken-grotesk/files/hanken-grotesk-latin-400-normal.woff2?url';
 import home from '../assets/screenshots/home.webp';
 import library from '../assets/screenshots/library.webp';
 import gamePage from '../assets/screenshots/game_page.webp';
+import gameScreenshots from '../assets/screenshots/game_screenshots.webp';
 import franchise from '../assets/screenshots/franchise.webp';
+import developers from '../assets/screenshots/devs.webp';
+import publishers from '../assets/screenshots/publishers.webp';
+import tags from '../assets/screenshots/tags.webp';
+import admin from '../assets/screenshots/admin_dashboard.webp';
 
 const org = 'https://github.com/Ludexis';
 const repo = `${org}/Ludexis`;
+const maintainer = 'https://github.com/InvictusRex';
 const description = 'A self-hosted catalogue for your game archives. Point it at your drives and get a searchable library with details, artwork and versions.';
 
 const screens = [
 	{ id: 'home', label: 'Home', path: '/', image: home, caption: 'Featured games, recently added, and games to rediscover.' },
 	{ id: 'library', label: 'Library', path: '/library', image: library, caption: 'Every game in your archive, with filters, sorting and versions grouped into one card.' },
-	{ id: 'game', label: 'Game page', path: '/archive/…', image: gamePage, caption: 'Details, screenshots, versions, the files on disk, and their history.' },
+	{ id: 'game', label: 'Game page', path: '/archive/…', image: gamePage, caption: 'Details, tags, developers and publishers, and where the game is stored.' },
+	{ id: 'shots', label: 'Screenshots', path: '/archive/…', image: gameScreenshots, caption: 'Screenshots from every metadata source on each game page, plus any you add.' },
 	{ id: 'franchise', label: 'Franchises', path: '/franchises', image: franchise, caption: 'Series and franchises, gathered from every metadata source.' },
+	{ id: 'developers', label: 'Developers', path: '/developers', image: developers, caption: 'Developers from A to Z, with how many of their games you have.' },
+	{ id: 'publishers', label: 'Publishers', path: '/publishers', image: publishers, caption: 'Publishers, indexed the same way.' },
+	{ id: 'tags', label: 'Tags', path: '/tags', image: tags, caption: 'Tags from every source, with how many games carry each.' },
+	{ id: 'admin', label: 'Admin', path: '/admin', image: admin, caption: 'Server health, library totals, recent jobs and edge devices at a glance.' },
 ];
+
+const docLinks = [
+	['Quick start', '/docs/start/quick-start/'],
+	['Edge devices', '/docs/edge/overview/'],
+	['Architecture', '/docs/architecture/overview/'],
+	['Contributing', '/docs/contributing/setup/'],
+];
+
+const repoLinks = [
+	['Ludexis', repo],
+	['Backend', `${org}/ludexis-backend`],
+	['Frontend', `${org}/ludexis-frontend`],
+	['This website', `${org}/ludexis-website`],
+];
+
+const githubIcon =
+	'M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z';
 
 const steps = [
 	{ title: 'Scan', text: 'Add the folders that hold your games, on the server or on another computer. Ludexis reads archives, installers, disc images and game folders without unpacking anything.' },
@@ -74,6 +105,8 @@ const faq = [
 		<meta name="twitter:card" content="summary_large_image" />
 		<link rel="icon" href="/icon.png" />
 		<link rel="apple-touch-icon" href="/apple-icon.png" />
+		<link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
 		<script is:inline>
 			// Same storage key as the docs, so the theme carries over between the two.
 			(() => {
@@ -91,7 +124,7 @@ const faq = [
 
 		<header class="bar">
 			<a class="brand" href="/" aria-label="Ludexis home">
-				<img src="/brand/shield.png" alt="" width="32" height="32" />
+				<Image src={shield} alt="" width={32} height={32} densities={[1, 2]} loading="eager" />
 				<span>Ludexis</span>
 			</a>
 			<nav aria-label="Main">
@@ -101,7 +134,7 @@ const faq = [
 					<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z" /></svg>
 				</button>
 				<a class="icon-button" href={repo} aria-label="Ludexis on GitHub">
-					<svg viewBox="0 0 24 24" aria-hidden="true" class="filled"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z" /></svg>
+					<svg viewBox="0 0 24 24" aria-hidden="true" class="filled"><path d={githubIcon} /></svg>
 				</a>
 			</nav>
 		</header>
@@ -117,17 +150,17 @@ const faq = [
 						<a class="button primary" href="/docs/start/quick-start/">Set it up</a>
 						<a class="button" href={repo}>View on GitHub</a>
 					</div>
-					<div class="command">
-						<code><span aria-hidden="true">$ </span>docker compose up -d</code>
-						<button type="button" class="copy" data-copy="docker compose up -d" aria-label="Copy command">Copy</button>
-					</div>
 				</div>
 				<div class="hero-art">
 					<Sigil />
 				</div>
+				<a class="scroll-cue" href="#screens">
+					See what it looks like
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+				</a>
 			</section>
 
-			<section class="screens" aria-labelledby="screens-title">
+			<section class="screens" id="screens" aria-labelledby="screens-title">
 				<h2 id="screens-title">What it looks like</h2>
 				<div class="tabs" role="tablist" aria-label="Screens">
 					{screens.map((screen, index) => (
@@ -150,9 +183,10 @@ const faq = [
 							<Image
 								src={screen.image}
 								alt={`Ludexis ${screen.label.toLowerCase()} screen`}
-								widths={[800, 1280, 1920, 2560]}
-								sizes="(min-width: 76rem) 72rem, 94vw"
-								loading={index === 0 ? 'eager' : 'lazy'}
+								widths={[640, 960, 1280, 1600, 1920, 2560]}
+								sizes="(min-width: 76rem) 64rem, 94vw"
+								loading="lazy"
+								decoding="async"
 							/>
 							<figcaption>{screen.caption}</figcaption>
 						</figure>
@@ -271,12 +305,17 @@ docker compose up -d
 
 			<section class="faq" aria-labelledby="faq-title">
 				<h2 id="faq-title">Questions</h2>
+				<!-- Two independent columns, so opening a question never moves the other side. -->
 				<div class="faq-list">
-					{faq.map(([question, answer]) => (
-						<details>
-							<summary>{question}</summary>
-							<p>{answer}</p>
-						</details>
+					{[faq.slice(0, Math.ceil(faq.length / 2)), faq.slice(Math.ceil(faq.length / 2))].map((column) => (
+						<div>
+							{column.map(([question, answer]) => (
+								<details>
+									<summary>{question}</summary>
+									<p>{answer}</p>
+								</details>
+							))}
+						</div>
 					))}
 				</div>
 			</section>
@@ -284,22 +323,24 @@ docker compose up -d
 
 		<footer class="foot">
 			<div class="foot-brand">
-				<img src="/brand/shield.png" alt="" width="40" height="40" />
-				<p>Ludexis is open source under the MIT licence.</p>
+				<Image src={shield} alt="" width={40} height={40} densities={[1, 2]} />
+				<div>
+					<p>Open source under the <a href={`${repo}/blob/main/LICENSE`}>MIT licence</a>.</p>
+					<p>
+						Maintained by
+						<a class="maintainer" href={maintainer}>
+							<svg viewBox="0 0 24 24" aria-hidden="true"><path d={githubIcon} /></svg>InvictusRex
+						</a>
+					</p>
+				</div>
 			</div>
-			<nav aria-label="Documentation">
-				<h2>Documentation</h2>
-				<a href="/docs/start/quick-start/">Quick start</a>
-				<a href="/docs/edge/overview/">Edge devices</a>
-				<a href="/docs/architecture/overview/">Architecture</a>
-				<a href="/docs/contributing/setup/">Contributing</a>
+			<nav aria-labelledby="foot-docs">
+				<h2 id="foot-docs">Documentation</h2>
+				<ul>{docLinks.map(([label, href]) => <li><a href={href}>{label}</a></li>)}</ul>
 			</nav>
-			<nav aria-label="Repositories">
-				<h2>Repositories</h2>
-				<a href={repo}>Ludexis</a>
-				<a href={`${org}/ludexis-backend`}>Backend</a>
-				<a href={`${org}/ludexis-frontend`}>Frontend</a>
-				<a href={`${org}/ludexis-website`}>This website</a>
+			<nav aria-labelledby="foot-repos">
+				<h2 id="foot-repos">Repositories</h2>
+				<ul>{repoLinks.map(([label, href]) => <li><a href={href}>{label}</a></li>)}</ul>
 			</nav>
 		</footer>
 
@@ -337,9 +378,32 @@ docker compose up -d
 				});
 			});
 
+			// Hidden screens are lazy images that would only load when their tab opens. Once the page has
+			// loaded, fetch them one at a time in tab order, so they are ready before anyone clicks. A tab
+			// that is hovered or focused jumps the queue.
+			const shots = tabs.map((tab) => document.querySelector<HTMLImageElement>(`#${tab.getAttribute('aria-controls')} img`)!);
+			const warm = (img: HTMLImageElement) => {
+				img.loading = 'eager';
+				return img.decode().catch(() => {});
+			};
+			tabs.forEach((tab, index) => {
+				const ahead = () => warm(shots[index]);
+				tab.addEventListener('pointerenter', ahead, { once: true });
+				tab.addEventListener('focus', ahead, { once: true });
+			});
+			const warmAll = async () => {
+				for (const img of shots) await warm(img);
+			};
+			const later = (task: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(task, { timeout: 2000 }) : setTimeout(task, 300));
+			const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+			if (!saveData) {
+				if (document.readyState === 'complete') later(warmAll);
+				else addEventListener('load', () => later(warmAll), { once: true });
+			}
+
 			for (const button of document.querySelectorAll<HTMLButtonElement>('.copy')) {
 				button.addEventListener('click', async () => {
-					const source = button.dataset.copyFrom ? document.getElementById(button.dataset.copyFrom)?.innerText : button.dataset.copy;
+					const source = document.getElementById(button.dataset.copyFrom!)?.innerText;
 					if (!source) return;
 					try {
 						await navigator.clipboard.writeText(source.trim());
